@@ -21,30 +21,45 @@ def cifra_texto(texto, senha):
     # Defina a ordem de cifragem desejada
     ordem_cifra = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ,.0123456789-"
     
-    for i, char in enumerate(texto):
-        senha_char = senha[i % senha_len]
-        offset = ordem_cifra.index(char)  # Obtem o índice na ordem_cifra
-        cifra_char = offset + int(senha_char)
-        x = ordem_cifra[cifra_char % len(ordem_cifra)]
-        resultado.append(x)
+    i = 0  # Inicialize um contador para controlar a posição na senha
+
+    for char in texto:
+        if char in ordem_cifra:
+            senha_char = senha[i % senha_len]
+            offset = ordem_cifra.index(char)
+            cifra_char = (offset + int(senha_char)) % len(ordem_cifra)
+            resultado.append(ordem_cifra[cifra_char])
+            i += 1  # Aumente a posição na senha apenas se um caractere válido for cifrado
+        else:
+            resultado.append(char)  # Se o caractere não estiver na ordem_cifra, mantenha-o inalterado
+
     return ''.join(resultado)
 
 
+
+
+
 def decifra_texto(texto, senha):
-    senha_str = str(senha)
     resultado = []
-    senha_len = len(senha_str)
+    senha_len = len(senha)
     
     # Defina a ordem de cifragem desejada
     ordem_cifra = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ,.0123456789-"
     
-    for i, char in enumerate(texto):
-        senha_char = senha_str[i % senha_len]
-        offset = ordem_cifra.index(char)  # Obtem o índice na ordem_cifra
-        cifra_char = offset - int(senha_char)
-        x = ordem_cifra[cifra_char % len(ordem_cifra)]
-        resultado.append(x)
+    i = 0  # Inicialize um contador para controlar a posição na senha
+
+    for char in texto:
+        if char in ordem_cifra:
+            senha_char = senha[i % senha_len]
+            offset = ordem_cifra.index(char)
+            cifra_char = (offset - int(senha_char)) % len(ordem_cifra)
+            resultado.append(ordem_cifra[cifra_char])
+            i += 1  # Aumente a posição na senha apenas se um caractere válido estiver sendo decifrado
+        else:
+            resultado.append(char)  # Se o caractere não estiver na ordem_cifra, mantenha-o inalterado
+
     return ''.join(resultado)
+
 
 
 @app.post("/cifrar/")
