@@ -1,30 +1,28 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, validator
 
 app = FastAPI()
 
 class CifraRequest(BaseModel):
     texto: str
-    senha: int
+    senha: str
 
     @validator('senha')
     def validate_senha(senha):
-        senha_str = str(senha)
-        if not senha_str.isdigit():
-            raise ValueError("A senha deve conter apenas dígitos.")
+        if not senha.isdigit():
+            raise HTTPException(status_code=400, detail="A senha deve conter apenas números")
         return senha
 
 
 def cifra_texto(texto, senha):
-    senha_str = str(senha)
     resultado = []
-    senha_len = len(senha_str)
+    senha_len = len(senha)
     
     # Defina a ordem de cifragem desejada
     ordem_cifra = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ,.0123456789-"
     
     for i, char in enumerate(texto):
-        senha_char = senha_str[i % senha_len]
+        senha_char = senha[i % senha_len]
         offset = ordem_cifra.index(char)  # Obtem o índice na ordem_cifra
         cifra_char = offset + int(senha_char)
         x = ordem_cifra[cifra_char % len(ordem_cifra)]
